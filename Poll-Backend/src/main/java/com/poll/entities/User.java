@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.poll.dtos.UserDTO;
 import com.poll.enums.UserRole;
 
 import jakarta.persistence.Entity;
@@ -32,6 +33,17 @@ public class User implements UserDetails{
     private String lastName;
 
     private UserRole userRole;
+
+    public UserDTO getUserDTO(){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(id);
+        userDTO.setFirstName(firstName);
+        userDTO.setLastName(lastName);
+        userDTO.setEmail(email);
+        userDTO.setUserRole(userRole);
+        return userDTO;
+
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
