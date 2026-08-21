@@ -2,10 +2,15 @@ import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import { Link, Avatar, Backdrop, Button, Box, CircularProgress, Container, createTheme, CssBaseline, Grid, TextField, ThemeProvider, Typography } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { useSnackbar } from 'notistack'
+import { signup } from '../../../services/auth/auth'
+import { saveToken } from '../../../utility/common'
 
 const defaultTheme = createTheme()
 
 const Signup = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [formData, setFormData] = useState({
       email: '',
       password: '',
@@ -28,8 +33,24 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    console.log(formData)
-    setLoading(false)
+    try {
+      const response = await signup(formData)
+      if(response.status === 201){
+        const responseData = response.data
+        saveToken(responseData.token)
+        navigate("/dashboard")
+        enqueueSnackbar(`Welcome ${responseData.Name}`, {variant: 'success', autoHideDuration: 5000})
+      }
+
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        enqueueSnackbar('User already exists!', {variant: 'error', autoHideDuration: 5000})
+      } else {
+        enqueueSnackbar('Signup failed!', {variant: 'error', autoHideDuration: 5000})
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
 
