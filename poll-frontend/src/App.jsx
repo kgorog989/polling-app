@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 import Header from './pages/header/Header'
 import { Route, Routes } from 'react-router-dom'
 import Signup from './pages/auth/signup/Signup'
 import Login from './pages/auth/login/Login'
-import Dashboard from './user/dashboard/Dashboard'
+import Dashboard from './pages/user/dashboard/Dashboard'
+import CreatePoll from './pages/user/create-poll/CreatePoll'
+import ViewMyPolls from './pages/user/view-my-poll/ViewMyPolls'
+import ViewPollDetails from './pages/user/view-poll-details/ViewPollDetails'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
@@ -19,6 +17,9 @@ function App() {
         <Route path='/register' element={<Signup />} />
         <Route path='/login' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/poll/create' element={<CreatePoll />} />
+        <Route path='/my-polls' element={<ViewMyPolls />} />
+        <Route path='/poll/:id/:view' element={<ViewPollDetails />} />
       </Routes>
     </>
   )
