@@ -20,4 +20,14 @@ public class PollDTO {
 
     private List<String> options;
     
+    private boolean isExpired;
+
+    private Long userId;
+
+    private String username;
+
+    private List<OptionsDTO> optionsDTOs;
+
+    private  boolean voted;
+
 }
