@@ -2,6 +2,7 @@ package com.poll.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,6 +37,7 @@ public class WebSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(request -> 
                 request
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").hasAnyAuthority(UserRole.USER.name())
                         .anyRequest().authenticated())
