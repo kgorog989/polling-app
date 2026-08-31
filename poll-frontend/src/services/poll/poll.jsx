@@ -11,7 +11,7 @@ export const postPoll = async (pollDTO) => {
 
 export const getAllPolls = async () => {
     try {
-        const response = await axiosInstance.post('api/user/polls');
+        const response = await axiosInstance.get('api/user/polls');
         return response;
     } catch (error) {
         throw error;
@@ -20,7 +20,7 @@ export const getAllPolls = async () => {
 
 export const getMyPolls = async () => {
     try {
-        const response = await axiosInstance.post('api/user/my-polls');
+        const response = await axiosInstance.get('api/user/my-polls');
         return response;
     } catch (error) {
         throw error;
