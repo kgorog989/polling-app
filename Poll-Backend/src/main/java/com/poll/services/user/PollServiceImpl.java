@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,11 +12,20 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.poll.dtos.CommentDTO;
+import com.poll.dtos.LikesDTO;
 import com.poll.dtos.OptionsDTO;
 import com.poll.dtos.PollDTO;
+import com.poll.dtos.PollDetailsDTO;
+import com.poll.dtos.VoteDTO;
+import com.poll.entities.Comment;
+import com.poll.entities.Likes;
 import com.poll.entities.Options;
 import com.poll.entities.Poll;
 import com.poll.entities.User;
+import com.poll.entities.Vote;
+import com.poll.repositories.CommentRepository;
+import com.poll.repositories.LikesRepository;
 import com.poll.repositories.OptionsRepository;
 import com.poll.repositories.PollRepository;
 import com.poll.repositories.VoteRepository;
@@ -39,6 +49,10 @@ public class PollServiceImpl implements PollService{
     private final JavaMailSender javaMailSender;
 
     private final VoteRepository voteRepository;
+
+    private final LikesRepository likesRepository;
+
+    private final CommentRepository commentRepository;
 
     @Value("${spring.mail.username}")
     private String senderEmail;
@@ -118,6 +132,85 @@ public class PollServiceImpl implements PollService{
                 .collect(Collectors.toList());
         }
         throw new EntityNotFoundException("User not found");
+    }
+
+    @Override
+    public LikesDTO giveLikeToPoll(Long id) {
+        Optional<Poll> optionalPoll = pollRepository.findById(id);
+        User user = jwtUtil.getLoggedInUser();
+        if (user != null && optionalPoll.isPresent()) {
+            Likes like = new Likes();
+            like.setUser(user);
+            like.setPoll(optionalPoll.get());
+            return likesRepository.save(like).getLikesDTO();
+        }
+        return null;
+    }
+
+    @Override
+    public CommentDTO postCommentOnPoll(CommentDTO commentDTO) {
+        Optional<Poll> optionalPoll = pollRepository.findById(commentDTO.getPollId());
+        User user = jwtUtil.getLoggedInUser();
+        if (user != null && optionalPoll.isPresent()) {
+            Comment comment = new Comment();
+            comment.setUser(user);
+            comment.setPoll(optionalPoll.get());
+            comment.setContent(commentDTO.getContent());
+            comment.setCreatedAt(new Date());
+            return commentRepository.save(comment).getCommentDTO();
+        }
+        return null;
+    }
+
+    @Override
+    public VoteDTO postVoteOnPoll(VoteDTO voteDTO) {
+        Optional<Poll> optionalPoll = pollRepository.findById(voteDTO.getPollId());
+        Optional<Options> optionalOption = optionsRepository.findById(voteDTO.getOptionId());
+        User user = jwtUtil.getLoggedInUser();
+        if (user != null && optionalPoll.isPresent() && optionalOption.isPresent()) {
+            Vote vote = new Vote();
+            // Checking if the poll has expired
+            if (optionalPoll.get().getExpiredAt().before(new Date())) {
+                throw new EntityNotFoundException("Poll has expired and cannot be voted on.");
+            }
+            vote.setUser(user);
+            vote.setPoll(optionalPoll.get());
+            vote.setOptions(optionalOption.get());
+            vote.setPostedDate(new Date());
+            optionalPoll.get().setTotalVoteCount(optionalPoll.get().getTotalVoteCount() + 1);
+            optionalOption.get().setVoteCount(optionalOption.get().getVoteCount() + 1);
+            optionsRepository.save(optionalOption.get());
+            Vote voted = voteRepository.save(vote);
+            pollRepository.save(optionalPoll.get());
+            return voted.getVoteDTO();
+        }
+        return null;
+    }
+
+    @Override
+    public PollDetailsDTO getPollById(Long pollId) {
+        Optional<Poll> optionalPoll = pollRepository.findById(pollId);
+        User user = jwtUtil.getLoggedInUser();
+        if (user != null && optionalPoll.isPresent()) {
+            List<Likes> likesList = likesRepository.findAllByPollId(optionalPoll.get().getId());
+            List<Comment> commentList = commentRepository.findAllByPollId(optionalPoll.get().getId());
+            PollDetailsDTO pollDetailsDTO = new PollDetailsDTO();
+            pollDetailsDTO.setPollDTO(getPollDTOInService(optionalPoll.get()));
+            pollDetailsDTO.getPollDTO().setLiked(likesRepository.findByPollIdAndUserId(pollId, user.getId()).isPresent());
+            // Map comments and set "You" if the comment was posted by the logged in user
+            List<CommentDTO> commentDTOList = commentList.stream().map(comment -> {
+                CommentDTO commentDTO = comment.getCommentDTO();
+                if (comment.getUser().getId().equals(user.getId())) {
+                    commentDTO.setUsername("You"); // Set "You" if the user posted the comment
+                }
+                return commentDTO;
+            }).toList();
+            pollDetailsDTO.setCommentDTOS(commentDTOList);
+            pollDetailsDTO.setLikesCount((long) likesList.size());
+            pollDetailsDTO.setCommentsCount((long) commentList.size());
+            return pollDetailsDTO;
+        }
+        return null;
     }
 
     public PollDTO getPollDTOInService(Poll poll){
