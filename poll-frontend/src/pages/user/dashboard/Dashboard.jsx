@@ -2,15 +2,20 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { getAllPolls } from '../../../services/poll/poll';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Grid, Paper, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Grid, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import moment from 'moment/moment'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 
 const Dashboard = () => {
   const [polls, setPolls] = useState([])
   const [loading, setLoading] = useState(false);
   const {enqueueSnackbar} = useSnackbar();
   const navigate = useNavigate()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [selectedPoll, setSelectedPoll] = useState(null)
+  const open = Boolean(anchorEl)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -30,6 +35,15 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+  
+  const handlePopoverOpen = (event, poll) => {
+    setAnchorEl(event.currentTarget)
+    setSelectedPoll(poll)
+  }
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null)
+  }
 
   return (
     <>
@@ -64,6 +78,30 @@ const Dashboard = () => {
                             <Avatar sx={{bgcolor: blue[500]}} aria-label='recipe'>
                               {poll.username.charAt(0)}
                             </Avatar>
+                        }
+                        action={
+                          <>
+                            <IconButton 
+                                aria-label='settings'
+                                onClick={(e) => handlePopoverOpen(e, poll)}
+                            >
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                                sx={{width: '10%'}}
+                                open={open && selectedPoll === poll}
+                                anchorEl={anchorEl}
+                                onClose={handlePopoverClose}
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'right'
+                                }}
+                            >
+                                <MenuItem onClick={() => navigate(`/poll/${poll.id}/view`)}>
+                                  <RemoveRedEyeIcon />
+                                </MenuItem>
+                            </Menu>
+                          </>
                         }
                         title={poll.username}
                         subheader={moment(poll.postedDate).fromNow()}
