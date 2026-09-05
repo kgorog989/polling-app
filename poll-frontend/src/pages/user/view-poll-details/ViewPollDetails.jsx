@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSnackbar } from 'notistack'
 import {getPollById, giveLikeToPoll, postCommentOnPoll, postVoteOnPoll } from '../../../services/poll/poll';
 import { useParams } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Divider, Grid, Paper, TextField, Typography, Stack } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Divider, Grid, Paper, TextField, Typography, Stack, LinearProgress } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import moment from 'moment/moment'
 import CommentIcon from '@mui/icons-material/Comment'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 
 const ViewPollDetails = () => {
   const [poll, setPoll] = useState()
@@ -140,28 +141,60 @@ const ViewPollDetails = () => {
                       >
                         <strong>{poll.question}</strong>
                       </Typography>
-                      {poll.optionsDTOs.map(option => (
-                        <Paper 
-                            elevation={3}
-                            sx={{p: 1, width: '95%', mt: 1}}
-                            key={option.id}
-                        >
-                          {option.title}
-                        </Paper>
-                      ))}
+                      {poll.voted || poll.expired ? (
+                        poll.optionsDTOs.map(option => (
+                          <React.Fragment key={option.id}>
+                            <div style={{ position: 'relative', width: '100%' }}>
+                              <LinearProgress
+                                  variant='determinate'
+                                  value={isNaN((option.voteCount / poll.totalVoteCount) * 100) ? 0 : ((option.voteCount / poll.totalVoteCount) * 100)}
+                                  sx={{ height: 30, bgcolor: '#CCD7DF', mt: 1 }}
+                              />
+                              <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: '8px'}}>
+                                <Typography variant='body2'>
+                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100)}%`}
+                                </Typography>
+                                {option.userVotedThisOption && 
+                                    <CheckCircleOutlineIcon sx={{ marginLeft: '4px', fontSize: '20px'}} />
+                                }
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        poll.optionsDTOs.map(option => (
+                          <Paper 
+                              elevation={3}
+                              sx={{p: 1, width: '95%', mt: 1}}
+                              key={option.id}
+                              onClick={() => handleAddVote(poll.id, option.id)}
+                          >
+                            {option.title}
+                          </Paper>
+                        ))
+                      )}
+                      
                     </CardContent>
 
                     <CardActions disableSpacing sx={{pt: 0, justifyContent: 'center', textAlign: 'center'}}>
-                      <>
+                      {poll.expired ? (
+                          <Typography variant='body2' color='text.secondary'>
+                            <strong>{poll.totalVoteCount}</strong> votes - Final results
+                          </Typography>
+                      ) : (
+                          <>
                             <Typography variant='body2' color='text.secondary'>
                               Vote: <strong>{poll.totalVoteCount}</strong>
                             </Typography>
                             <Typography variant='body2' color='text.secondary' sx={{ml: 2}}>
                               Expires At: <strong>{moment(poll.expiredAt).format('HH:mm on MMMM D, YYYY')}</strong>
                             </Typography>
-                      </>
+                          </>
+                      )}
                     </CardActions>
+
                     <Divider />
+
                     <Box 
                       sx={{ 
                         width: '100%', 
@@ -172,17 +205,17 @@ const ViewPollDetails = () => {
                       }}
                     >
                       {/* Likes */}
-                      <Stack direction="row" alignItems="center" spacing={1}>
+                      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                         {poll.liked ? (
                           <FavoriteIcon sx={{ color: 'red', cursor: 'pointer' }} />
                         ) : (
-                          <FavoriteBorderIcon onClick={() => handleLikeClick(poll.id)} />
+                          <FavoriteBorderIcon sx={{ cursor: 'pointer'}} onClick={() => handleLikeClick(poll.id)} />
                         )}
                         <Typography component="span">{likesCount}</Typography>
                       </Stack>
 
                       {/* Comments */}
-                      <Stack direction="row" alignItems="center" spacing={1}>
+                      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                         <CommentIcon sx={{ color: blue[500] }} />
                         <Typography component="span">{commentsCount}</Typography>
                       </Stack>
@@ -221,7 +254,7 @@ const ViewPollDetails = () => {
                                       onChange={(e) => setNewComment(e.target.value)}
                                   />
                                 </Box>
-                                <Box sx={{ mt: 2 }} textAlign='right'>
+                                <Box sx={{ mt: 2, textAlign: 'right'}}>
                                   <Button 
                                       variant='contained'
                                       color='primary'

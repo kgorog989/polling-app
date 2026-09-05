@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { deletePollById, getMyPolls, postVoteOnPoll } from '../../../services/poll/poll';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Grid, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Grid, IconButton, Menu, MenuItem, Paper, Typography, LinearProgress } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import moment from 'moment/moment'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 
 const ViewMyPolls = () => {
   const [polls, setPolls] = useState([])
@@ -156,33 +157,64 @@ const ViewMyPolls = () => {
                       >
                         <strong>{poll.question}</strong>
                       </Typography>
-                      {poll.optionsDTOs.map(option => (
-                        <Paper 
-                            elevation={3}
-                            sx={{p: 1, width: '95%', mt: 1}}
-                            key={option.id}
-                        >
-                          {option.title}
-                        </Paper>
-                      ))}
+                      {poll.voted || poll.expired ? (
+                        poll.optionsDTOs.map(option => (
+                          <React.Fragment key={option.id}>
+                            <div style={{ position: 'relative', width: '100%' }}>
+                              <LinearProgress
+                                  variant='determinate'
+                                  value={isNaN((option.voteCount / poll.totalVoteCount) * 100) ? 0 : ((option.voteCount / poll.totalVoteCount) * 100)}
+                                  sx={{ height: 30, bgcolor: '#CCD7DF', mt: 1 }}
+                              />
+                              <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: '8px'}}>
+                                <Typography variant='body2'>
+                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100)}%`}
+                                </Typography>
+                                {option.userVotedThisOption && 
+                                    <CheckCircleOutlineIcon sx={{ marginLeft: '4px', fontSize: '20px'}} />
+                                }
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        poll.optionsDTOs.map(option => (
+                          <Paper 
+                              elevation={3}
+                              sx={{p: 1, width: '95%', mt: 1}}
+                              key={option.id}
+                              onClick={() => handleAddVote(poll.id, option.id)}
+                          >
+                            {option.title}
+                          </Paper>
+                        ))
+                      )}
                     </CardContent>
 
                     <CardActions disableSpacing sx={{pt: 0, justifyContent: 'center', textAlign: 'center'}}>
-                      <>
+                      {poll.expired ? (
+                          <Typography variant='body2' color='text.secondary'>
+                            <strong>{poll.totalVoteCount}</strong> votes - Final results
+                          </Typography>
+                      ) : (
+                          <>
                             <Typography variant='body2' color='text.secondary'>
                               Vote: <strong>{poll.totalVoteCount}</strong>
                             </Typography>
                             <Typography variant='body2' color='text.secondary' sx={{ml: 2}}>
                               Expires At: <strong>{moment(poll.expiredAt).format('HH:mm on MMMM D, YYYY')}</strong>
                             </Typography>
-                      </>
+                          </>
+                      )}
                     </CardActions>
+
                   </Card>
                 </Grid>
               ))
             )}
           </Grid>
         </Box>
+        <br/>
         <Backdrop
           sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
           open={loading}
