@@ -15,7 +15,7 @@ const ViewPollDetails = () => {
   const [likesCount, setLikesCount] = useState()
   const [commentsCount, setCommentsCount] = useState()
   const [comments, setComments] = useState()
-  const [newComment, setNewComment] = useState()
+  const [newComment, setNewComment] = useState('')
   const [loading, setLoading] = useState(false);
   const {enqueueSnackbar} = useSnackbar();
   const { id } = useParams();
@@ -152,7 +152,7 @@ const ViewPollDetails = () => {
                               />
                               <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: '8px'}}>
                                 <Typography variant='body2'>
-                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100)}%`}
+                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100).toFixed(2)}%`}
                                 </Typography>
                                 {option.userVotedThisOption && 
                                     <CheckCircleOutlineIcon sx={{ marginLeft: '4px', fontSize: '20px'}} />
@@ -234,15 +234,15 @@ const ViewPollDetails = () => {
                                 </Typography>
                                 <Box sx={{ maxHeight: '200px', overflowY: 'auto', p: 1 }}>
                                   {comments.map((comment, index) => (
-                                    <>
+                                    <React.Fragment key={index}>
                                       <Divider />
-                                      <Typography key={index} variant='body1' gutterBottom sx={{ mb: -2, pt: 2 }}>
+                                      <Typography variant='body1' gutterBottom sx={{ mb: -2, pt: 2 }}>
                                         <strong>{comment.content}</strong>
                                       </Typography>
                                       <p>posted {moment(comment.createdAt).fromNow()} by {comment.username}
                                       </p>
                                       <Divider />
-                                    </>
+                                    </React.Fragment>
                                   ))}
                                 </Box>
                                 <Box sx={{ mt: 2 }}>

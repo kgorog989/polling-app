@@ -84,10 +84,11 @@ const CreatePoll = () => {
                   freeSolo
                   value={formData.options}
                   onChange={(event, newValue) => setFormData({ ...formData, options: newValue })}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                        <Chip key={index} label={option} {...getTagProps({ index })} />
-                    ))
+                  renderValue={(value, getTagProps) =>
+                    value.map((option, index) => {
+                      const { key, ...tagProps } = getTagProps({ index });
+                      return <Chip key={key} label={option} {...tagProps} />;
+                    })
                   }
                   renderInput={(params) => (
                     <TextField

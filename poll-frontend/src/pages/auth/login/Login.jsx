@@ -110,7 +110,7 @@ const Login = () => {
 
                 <Grid container>
                   <Grid>
-                    <Link variant='body2' onClick={() => navigate('/register')}>
+                    <Link variant='body2' onClick={() => navigate('/register')} sx={{ cursor: 'pointer'}}>
                       {"Don't have an account? Sign up"}
                     </Link>
                   </Grid>

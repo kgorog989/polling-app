@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Button, IconButton, Toolbar, Typography} from '@mui/material'
+import { AppBar, Box, Button, IconButton, Toolbar, Typography, Menu, MenuItem, Avatar, ListItem } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { isTokenValid, removeToken } from '../../utility/common';
 
@@ -10,6 +10,8 @@ const Header = () => {
     const location = useLocation()
 
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
 
     const handleSignout = () => {
         navigate("/login")
@@ -31,6 +33,14 @@ const Header = () => {
 
         return () => clearInterval(interval)
     }, [])
+
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null)
+    }
     
   return (
         <Box sx={{flexGrow : 1}}>
@@ -42,9 +52,52 @@ const Header = () => {
                         color="inherit"
                         aria-label="menu"
                         sx={{mr:2}}
+                        onClick={(e) => handlePopoverOpen(e)}
                         >
                             <MenuIcon/>
                     </IconButton>
+                    <Menu
+                        sx={{width: '50%'}}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handlePopoverClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left'
+                        }}
+                    >
+                        {isUserLoggedIn ? (
+                            <>
+                                <ListItem>
+                                    <Avatar sx={{ bgcolor: 'primary.main' }}/>
+                                    <Typography sx={{ ml: 2 }}>
+                                        MY PROFILE
+                                    </Typography>
+                                </ListItem>
+                                <MenuItem onClick={() => navigate('/dashboard')}>
+                                    View all polls
+                                </MenuItem>
+                                <MenuItem onClick={() => navigate('/my-polls')}>
+                                    View my polls
+                                </MenuItem>
+                                <MenuItem onClick={() => navigate('/poll/create')}>
+                                    Create a poll
+                                </MenuItem>
+                                <MenuItem sx={{color: 'red'}} onClick={handleSignout}>
+                                    Logout
+                                </MenuItem>
+                            </>
+                        ) : (
+                            <>
+                                <MenuItem onClick={() => navigate('/login')}>
+                                    Login
+                                </MenuItem>
+                                <MenuItem onClick={() => navigate('/register')}>
+                                    Sign up
+                                </MenuItem>
+                            </>
+                        )}
+                    </Menu>
                     <Typography variant='h6' component="div" sx={{flexGrow : 1}}>
                         Polling
                     </Typography>

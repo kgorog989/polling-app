@@ -7,6 +7,7 @@ import Dashboard from './pages/user/dashboard/Dashboard'
 import CreatePoll from './pages/user/create-poll/CreatePoll'
 import ViewMyPolls from './pages/user/view-my-poll/ViewMyPolls'
 import ViewPollDetails from './pages/user/view-poll-details/ViewPollDetails'
+import Homepage from './pages/homepage/Homepage'
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
     <>
       <Header />
       <Routes>
+        <Route path='/' element={<Homepage />} />
         <Route path='/register' element={<Signup />} />
         <Route path='/login' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />} />

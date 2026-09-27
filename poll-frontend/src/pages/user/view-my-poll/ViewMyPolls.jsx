@@ -168,7 +168,7 @@ const ViewMyPolls = () => {
                               />
                               <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: '8px'}}>
                                 <Typography variant='body2'>
-                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100)}%`}
+                                  {option.title} - {isNaN((option.voteCount / poll.totalVoteCount) * 100) ? '0%' : `${((option.voteCount / poll.totalVoteCount) * 100).toFixed(2)}%`}
                                 </Typography>
                                 {option.userVotedThisOption && 
                                     <CheckCircleOutlineIcon sx={{ marginLeft: '4px', fontSize: '20px'}} />
