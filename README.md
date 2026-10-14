@@ -53,19 +53,19 @@ A full-stack web application for creating and voting on polls in real time. Buil
   - Footer about the app.
 
  <p align="center" width="100%">
-<img width="1881" height="863" alt="image" src="https://github.com/user-attachments/assets/ef5e342c-7111-41dc-a08c-8ea945bf456a" />
+<img width="100%" height="863" alt="image" src="https://github.com/user-attachments/assets/ef5e342c-7111-41dc-a08c-8ea945bf456a" />
 </p>
 
  <p align="center" width="100%">
-<img width="1880" height="863" alt="image" src="https://github.com/user-attachments/assets/db7e6dd3-d0fc-4d83-a08c-4ab57bb5645f" />
+<img width="100%" height="863" alt="image" src="https://github.com/user-attachments/assets/db7e6dd3-d0fc-4d83-a08c-4ab57bb5645f" />
 </p>
 
  <p align="center" width="100%">
-<img width="1880" height="858" alt="image" src="https://github.com/user-attachments/assets/0f046aa4-5fea-4044-8ebc-1129fcd3f3a4" />
+<img width="100%" height="858" alt="image" src="https://github.com/user-attachments/assets/0f046aa4-5fea-4044-8ebc-1129fcd3f3a4" />
 </p>
 
  <p align="center" width="100%">
-<img width="1879" height="862" alt="image" src="https://github.com/user-attachments/assets/b758c906-d47a-42a0-88ee-74df7580b023" />
+<img width="100%" height="862" alt="image" src="https://github.com/user-attachments/assets/b758c906-d47a-42a0-88ee-74df7580b023" />
 </p>
 
 - Sign Up (/register)
@@ -97,15 +97,15 @@ A full-stack web application for creating and voting on polls in real time. Buil
   - **Results**: Results become visible once you have submitted your vote or after the poll has reached its expiration date.
  
  <p align="center" width="100%">
-<img width="1881" height="868" alt="image" src="https://github.com/user-attachments/assets/d7dfc2be-11fb-4680-ba7c-3114e07859b1" />
+<img width="100%" height="868" alt="image" src="https://github.com/user-attachments/assets/d7dfc2be-11fb-4680-ba7c-3114e07859b1" />
 </p>
 
  <p align="center" width="100%">
-<img width="1886" height="872" alt="image" src="https://github.com/user-attachments/assets/cea28260-1d98-44cf-b81a-6d40a6c51f85" />
+<img width="100%" height="872" alt="image" src="https://github.com/user-attachments/assets/cea28260-1d98-44cf-b81a-6d40a6c51f85" />
 </p>
 
  <p align="center" width="100%">
-<img width="1873" height="848" alt="image" src="https://github.com/user-attachments/assets/4b9296ec-355c-4cc2-85fb-62a3f45fa893" />
+<img width="100%" height="792" alt="image" src="https://github.com/user-attachments/assets/3833410d-305b-40c0-b59a-249a070e0c5d" />
 </p>
 
 - My Polls (/my-polls)
@@ -130,6 +130,10 @@ A full-stack web application for creating and voting on polls in real time. Buil
 
  <p align="center" width="100%">
 <img width="60%" alt="image" src="https://github.com/user-attachments/assets/a4f5845c-66b4-4f2d-9c82-8fc3839f617e" />
+</p>
+
+ <p align="center" width="100%">
+<img width="70%" height="267" alt="image" src="https://github.com/user-attachments/assets/32183af9-9f0c-41e2-a027-39bbc5bf21a8" />
 </p>
 
 - Poll Details (/poll/:id/view)
