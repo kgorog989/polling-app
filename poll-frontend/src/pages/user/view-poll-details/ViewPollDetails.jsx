@@ -165,7 +165,11 @@ const ViewPollDetails = () => {
                         poll.optionsDTOs.map(option => (
                           <Paper 
                               elevation={3}
-                              sx={{p: 1, width: '95%', mt: 1}}
+                              sx={{p: 1, width: '95%', mt: 1, cursor: 'pointer', 
+                                '&:hover': {
+                                    color: 'white',
+                                    backgroundColor: 'primary.main',
+                                  }}}
                               key={option.id}
                               onClick={() => handleAddVote(poll.id, option.id)}
                           >
